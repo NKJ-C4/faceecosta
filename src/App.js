@@ -6,29 +6,43 @@ import Logo from "./Components/Logo/Logo";
 import Rank from "./Components/Rank/Rank";
 import "./App.css";
 
-
-// const particlesOptions = {
-//   particles: {
-//     line_linked: {
-//       shadow: {
-//         enable: true,
-//         color: "#3CA9D1",
-//         blur: 5,
-//       },
-//     },
-//   },
-// }
+const particlesOptions = {
+  particles: {
+    number: {
+      value: 50,
+      density: {
+        enable: true,
+        value_area: 1000,
+      },
+    },
+  },
+};
 class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      input: "",
+    };
+  }
+
+  onInputChange = (event) => {
+    console.log(event.target.value);
+  };
+
+  onButtonSubmit = () => {
+    console.log("click");
+  };
   render() {
     return (
       <div className="App">
-        {/* <Particles
-          params={particlesOptions}
-        /> */}
+        <Particles className="particles" params={particlesOptions} />
         <Navigation />
         <Logo />
         <Rank />
-        <ImageLinkForm />
+        <ImageLinkForm
+          onInputChange={this.onInputChange}
+          onButtonSubmit={this.onButtonSubmit}
+        />
       </div>
     );
   }

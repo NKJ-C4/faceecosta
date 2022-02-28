@@ -10,6 +10,7 @@ import Clarifai from 'clarifai';
 import "./App.css";
 import FaceRecognition from "./Components/FaceRecognition/FaceRecognition";
 
+//Checking for git username change, this comment has no significance at all regarding the app
 const app = new Clarifai.App({
   apiKey: '5b468b2d8f3e43219fd0a98f63bbd9b4'
 })

@@ -38,6 +38,12 @@ class App extends Component {
     };
   }
 
+  componentDidMount() {
+    fetch('http://localhost:3000/')
+      .then(response => response.json())
+      .then(data => console.log(data))
+  }
+
   onButtonSubmit = () => {
     // Your PAT (Personal Access Token) can be found in the portal under Authentification
     const PAT = '6b8400558e134bffb6eb548e1298ed9d';

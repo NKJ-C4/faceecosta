@@ -35,7 +35,26 @@ class App extends Component {
       box: {},
       route: 'signin',
       isSignedIn: false,
+      user: {
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: ''
+      }
     };
+  }
+
+  loadUser = (data) => {
+    this.setState({
+      user: {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        entries: data.entries,
+        joined: data.joined
+      }
+    })
   }
 
   componentDidMount() {
@@ -47,11 +66,8 @@ class App extends Component {
   onButtonSubmit = () => {
     // Your PAT (Personal Access Token) can be found in the portal under Authentification
     const PAT = '6b8400558e134bffb6eb548e1298ed9d';
-    // Specify the correct user_id/app_id pairings
-    // Since you're making inferences outside your app's scope
     const USER_ID = 'bpw161z89otb';
     const APP_ID = 'visageer';
-    // Change these to whatever model and image URL you want to use
     const MODEL_ID = 'face-detection';
     const MODEL_VERSION_ID = '6dc7e46bc9124c5c8824be4822abe105';
     const IMAGE_URL = this.state.input;
@@ -59,10 +75,6 @@ class App extends Component {
     this.setState({
       imageUrl: this.state.input
     })
-
-    ///////////////////////////////////////////////////////////////////////////////////
-    // YOU DO NOT NEED TO CHANGE ANYTHING BELOW THIS LINE TO RUN THIS EXAMPLE
-    ///////////////////////////////////////////////////////////////////////////////////
 
     const raw = JSON.stringify({
           "user_app_id": {
@@ -95,7 +107,22 @@ class App extends Component {
 
     fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/versions/" + MODEL_VERSION_ID + "/outputs", requestOptions)
         .then(response => response.json())
-        .then(response => this.displayFaceBox(this.calculateFaceLocation(response)))
+        .then(response => {
+          if(response) {
+            fetch('http://localhost:3000/image/', {
+              method: "put",
+              headers: {"Content-Type": "application/json"},
+              body: JSON.stringify({
+                id: this.state.user.id
+              })
+            })
+              .then(res => res.json())
+              .then(count => {
+                this.setState(Object.assign(this.state.user, {entries: count}))
+              })
+          }
+          this.displayFaceBox(this.calculateFaceLocation(response))
+        })
         .catch(error => console.log('error', error));
   }
 
@@ -157,7 +184,7 @@ class App extends Component {
         {this.state.route === 'home' ?
            <>
           <Logo />
-          <Rank />
+          <Rank name={this.state.user.name} entries={this.state.user.entries} />
           <ImageLinkForm
             onInputChange={this.onInputChange}
             onButtonSubmit={this.onButtonSubmit}
@@ -166,9 +193,9 @@ class App extends Component {
           </>
         : (
             this.state.route === 'signin' ?
-              <SignIn onRouteChange={this.onRouteChange} />
+              <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
             :
-              <Register onRouteChange={this.onRouteChange} />
+              <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
           )
         } 
       </div>

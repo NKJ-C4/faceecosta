@@ -6,6 +6,7 @@ class SignIn extends React.Component {
     this.state = {
       signInEmail: "",
       signInPassword: "",
+      error: null
     };
   }
 
@@ -18,7 +19,8 @@ class SignIn extends React.Component {
   };
 
   onSubmitSignIn = () => {
-    fetch("http://localhost:3000/signin", {
+    if(this.state.signInEmail !== "") {
+      fetch("http://localhost:3000/signin", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -33,9 +35,18 @@ class SignIn extends React.Component {
         if (user.id) {
           this.props.loadUser(user)
           this.props.onRouteChange("home") 
+          localStorage.setItem("isLoggedIn", true)
+          this.setState({
+            error: null
+          })
         }
       })
       .catch(err => console.error(err))
+    } else {
+      this.setState({
+        error: "Invalid Credentials!"
+      })
+    }
   };
 
   render() {
@@ -87,6 +98,7 @@ class SignIn extends React.Component {
                 Register
               </p>
             </div>
+            {this.state.error !== null && <div className="error-container">{this.state.error}</div>}
           </div>
         </main>
       </article>

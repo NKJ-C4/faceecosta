@@ -7,7 +7,8 @@ class Register extends React.Component{
     this.state = {
       email: "",
       password: "",
-      name: ""
+      name: "",
+      error: null
     };
   }
 
@@ -24,7 +25,8 @@ class Register extends React.Component{
   };
 
   onSubmitregister = () => {
-    fetch("http://localhost:3000/register", {
+    if (this.state.email !== "" && this.state.name !=="" && this.state.password !== "") {
+      fetch("http://localhost:3000/register", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -43,7 +45,13 @@ class Register extends React.Component{
         }
       })
       .catch(err => console.error(err))
+    } else {
+      this.setState({
+        error: "Invalid Credentials!"
+      })
+    }
   };
+  
 
   render() {
     return(
@@ -72,6 +80,7 @@ class Register extends React.Component{
             type="submit" 
             value="Register" />
           </div>
+          {this.state.error !== null && <div className="error-container">{this.state.error}</div>}
         </div>
       </main>
       </article>

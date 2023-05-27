@@ -15,3 +15,15 @@
   left: 0;
   z-index: -1;
 }
+
+.error-container{
+  margin-top: 10px;
+  color: #ff3333;
+  background-color: skyblue;
+  opacity: 0.8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: bold;
+}

@@ -9,6 +9,8 @@ import Register from "./Components/Register/Register";
 import Clarifai from 'clarifai';
 import "./App.css";
 import FaceRecognition from "./Components/FaceRecognition/FaceRecognition";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 //Checking for git username change, this comment has no significance at all regarding the app
 const app = new Clarifai.App({
@@ -26,23 +28,25 @@ const particlesOptions = {
     },
   },
 };
+
+const initialState = {
+  input: "",
+  imageUrl: '',
+  box: {},
+  route: 'signin',
+  isSignedIn: false,
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: ''
+  }
+};
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      input: "",
-      imageUrl: '',
-      box: {},
-      route: 'signin',
-      isSignedIn: false,
-      user: {
-        id: '',
-        name: '',
-        email: '',
-        entries: 0,
-        joined: ''
-      }
-    };
+    this.state = initialState;
   }
 
   loadUser = (data) => {
@@ -120,10 +124,12 @@ class App extends Component {
               .then(count => {
                 this.setState(Object.assign(this.state.user, {entries: count}))
               })
+              .catch(err => toast.error("Something went wrong"))
           }
           this.displayFaceBox(this.calculateFaceLocation(response))
+          toast.success("Face detected!")
         })
-        .catch(error => console.log('error', error));
+        .catch(error => toast.error("Something went wrong"));
   }
 
   calculateFaceLocation = (data) =>{
@@ -131,7 +137,6 @@ class App extends Component {
     const image = document.getElementById('inputimage');
     const width = Number(image.width);
     const height = Number(image.height);
-    // console.log("data here: ", width, height, clarifaiFace);
     return {
       leftCol: clarifaiFace.left_col * width,
       topRow: clarifaiFace.top_row * height,
@@ -146,30 +151,13 @@ class App extends Component {
   }
 
   onInputChange = (event) => {
-    // console.log(event.target.value);
     this.setState({input: event.target.value})
   };
 
-  // onButtonSubmit = () => {
-  //   this.setState({
-  //     imageUrl: this.state.input,
-  //   })
-  //   // console.log("click");
-  //   app.models
-  //     .predict(
-  //       Clarifai.FACE_DETECT_MODEL, 
-  //       this.state.input
-  //     )
-  //     .then(response => this.displayFaceBox(this.calculateFaceLocation(response))
-  //     .catch(err => console.log(err))
-  //     )
-  // };
-
   onRouteChange = (route) => {
     if (route === 'signout') {
-      this.setState({isSignedIn: false})
+      this.setState(initialState)
       this.setState({route: 'signin'})
-      localStorage.setItem("isLoggedIn", false)
     } else if (route === 'home') {
       this.setState({isSignedIn: true})
       this.setState({
@@ -187,7 +175,7 @@ class App extends Component {
       <div className="App">
         <Particles className="particles" params={particlesOptions} />
         <Navigation onRouteChange={this.onRouteChange} isSignedIn={this.state.isSignedIn} />
-        {this.state.route === 'home' || localStorage.getItem("isLoggedIn") === true ?
+        {this.state.route === 'home' ?
            <>
           <Logo />
           <Rank name={this.state.user.name} entries={this.state.user.entries} />
@@ -204,6 +192,7 @@ class App extends Component {
               <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
           )
         } 
+        <ToastContainer />
       </div>
     );
   }

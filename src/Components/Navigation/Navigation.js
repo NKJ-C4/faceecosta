@@ -1,8 +1,7 @@
 import React from "react";
 
-const loginCheck = localStorage.getItem("isLoggedIn");
 const Navigation = ({ onRouteChange, isSignedIn }) => {
-    if(loginCheck === true){
+    if(isSignedIn === true){
       return(
         <nav style={{display: 'flex', justifyContent: 'flex-end'}}>
           <p onClick={() => onRouteChange('signout')} className="f3 link dim black underline pa3 pointer">Sign Out</p>

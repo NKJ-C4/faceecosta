@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "react-toastify";
 
 class SignIn extends React.Component {
   constructor(props) {
@@ -6,7 +7,6 @@ class SignIn extends React.Component {
     this.state = {
       signInEmail: "",
       signInPassword: "",
-      error: null
     };
   }
 
@@ -20,7 +20,7 @@ class SignIn extends React.Component {
 
   onSubmitSignIn = () => {
     if(this.state.signInEmail !== "") {
-      fetch("http://localhost:3000/signin", {
+      fetch("https://visageerbackend.onrender.com/signin", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -35,16 +35,16 @@ class SignIn extends React.Component {
         if (user.id) {
           this.props.loadUser(user)
           this.props.onRouteChange("home") 
-          this.setState({
-            error: null
-          })
+          toast.success(`Welcome, ${user?.name}`)
+        } else {
+          toast.error("Unable to Log In. Invalid credentials")
         }
       })
-      .catch(err => console.error(err))
-    } else {
-      this.setState({
-        error: "Invalid Credentials!"
+      .catch(err => {
+        toast.error("Could not Sign In")
       })
+    } else {
+      toast.error("Unable to Log In. Invalid credentials")
     }
   };
 
@@ -97,7 +97,6 @@ class SignIn extends React.Component {
                 Register
               </p>
             </div>
-            {this.state.error !== null && <div className="error-container">{this.state.error}</div>}
           </div>
         </main>
       </article>

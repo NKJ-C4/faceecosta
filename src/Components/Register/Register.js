@@ -1,4 +1,5 @@
 import React from "react";
+import { toast } from "react-toastify";
 
 
 class Register extends React.Component{
@@ -8,7 +9,6 @@ class Register extends React.Component{
       email: "",
       password: "",
       name: "",
-      error: null
     };
   }
 
@@ -26,7 +26,7 @@ class Register extends React.Component{
 
   onSubmitregister = () => {
     if (this.state.email !== "" && this.state.name !=="" && this.state.password !== "") {
-      fetch("http://localhost:3000/register", {
+      fetch("https://visageerbackend.onrender.com/register", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
@@ -42,13 +42,13 @@ class Register extends React.Component{
         if (user.id) {
           this.props.loadUser(user)
           this.props.onRouteChange("home") 
+        } else {
+          toast.error("Unable to register")
         }
       })
-      .catch(err => console.error(err))
+      .catch(toast.warning("Bad credentials"))
     } else {
-      this.setState({
-        error: "Invalid Credentials!"
-      })
+      toast.error("Please enter valid details")
     }
   };
   
@@ -80,7 +80,6 @@ class Register extends React.Component{
             type="submit" 
             value="Register" />
           </div>
-          {this.state.error !== null && <div className="error-container">{this.state.error}</div>}
         </div>
       </main>
       </article>

@@ -62,7 +62,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch('http://localhost:3000/')
+    fetch('https://visageerbackend.onrender.com')
       .then(response => response.json())
       .then(data => console.log(data))
   }
@@ -71,8 +71,8 @@ class App extends Component {
     this.setState({
       imageUrl: this.state.input
     })
-
-    fetch('http://localhost:3000/imageurl', {
+    if(this.state.input) {
+      fetch('https://visageerbackend.onrender.com/imageurl', {
       method: 'post',
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
@@ -82,7 +82,7 @@ class App extends Component {
       .then(response => response.json())
         .then(response => {
           if(response) {
-            fetch('http://localhost:3000/image/', {
+            fetch('https://visageerbackend.onrender.com/image/', {
               method: "put",
               headers: {"Content-Type": "application/json"},
               body: JSON.stringify({
@@ -99,6 +99,9 @@ class App extends Component {
           toast.success("Face detected!")
         })
         .catch(error => toast.error("Something went wrong"));
+    } else {
+      toast.error("Please enter valid Image URL")
+    }
   }
 
   calculateFaceLocation = (data) =>{
@@ -127,6 +130,7 @@ class App extends Component {
     if (route === 'signout') {
       this.setState(initialState)
       this.setState({route: 'signin'})
+      toast.success("Succesfully logged out")
     } else if (route === 'home') {
       this.setState({isSignedIn: true})
       this.setState({
@@ -161,7 +165,7 @@ class App extends Component {
               <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
           )
         } 
-        <ToastContainer />
+        <ToastContainer position="bottom-right"/>
       </div>
     );
   }

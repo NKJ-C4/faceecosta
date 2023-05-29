@@ -46,7 +46,7 @@ class Register extends React.Component{
           toast.error("Unable to register")
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => toast.error("Bad Credentials"))
     } else {
       toast.error("Please enter valid details")
     }
